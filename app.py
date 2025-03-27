@@ -1,8 +1,10 @@
+from flask_cors import CORS
 from flask import Flask, request, jsonify
 from openai import OpenAI
 import os
 
 app = Flask(__name__)
+CORS(app)  # <-- Esta línea permite llamadas desde cualquier lugar (como Wix)
 
 # Creamos el cliente de OpenAI con la API key desde las variables de entorno
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
