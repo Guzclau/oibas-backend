@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
-import openai
+from openai import OpenAI
 import os
 
 app = Flask(__name__)
 
-# Cargamos la API key desde las variables de entorno
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Creamos el cliente de OpenAI con la API key desde las variables de entorno
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/oibas", methods=["POST"])
 def oibas():
@@ -23,7 +23,7 @@ def oibas():
     """
 
     try:
-        respuesta = openai.ChatCompletion.create(
+        respuesta = client.chat.completions.create(
             model="gpt-4-0125-preview",
             messages=[
                 {"role": "system", "content": mensaje_sistema},
@@ -33,7 +33,7 @@ def oibas():
             max_tokens=500
         )
 
-        texto = respuesta["choices"][0]["message"]["content"]
+        texto = respuesta.choices[0].message.content
         return jsonify({"respuesta": texto})
     
     except Exception as e:
@@ -44,6 +44,6 @@ def oibas():
 def index():
     return "OIBAS está en línea. Consultame con POST a /oibas"
 
-# 🧠 Línea que faltaba para ejecución correcta
+# Ejecutar la app localmente
 if __name__ == "__main__":
     app.run()
