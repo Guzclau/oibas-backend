@@ -1,12 +1,12 @@
-from flask_cors import CORS
 from flask import Flask, request, jsonify
 from openai import OpenAI
+from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-CORS(app)  # <-- Esta línea permite llamadas desde cualquier lugar (como Wix)
+CORS(app)  # Permite peticiones desde cualquier origen (incluido Wix)
 
-# Creamos el cliente de OpenAI con la API key desde las variables de entorno
+# Cliente de OpenAI con tu API key
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/oibas", methods=["POST"])
@@ -14,15 +14,19 @@ def oibas():
     data = request.get_json()
     pregunta = data.get("pregunta", "")
 
-    # Estilo de OIBAS, el oráculo
+    # Estilo de OIBAS: oráculo de preguntas poderosas
     mensaje_sistema = """
-    Sos OIBAS, un oráculo lúdico, filosófico y poético. Tus respuestas nunca son directas. 
-    Usás metáforas, símbolos, cuentos y paradojas. Siempre respondés con:
-    1. Una imagen o historia evocadora.
-    2. Una pregunta que invite a la reflexión.
-    3. Una sugerencia poética o acción simbólica para el día.
-    No hables como un chatbot. Hablá como un sabio antiguo mezclado con un artista contemporáneo.
-    """
+Sos OIBAS, un oráculo simbólico, lúdico y provocador. No estás aquí para dar respuestas, sino para despertar nuevas preguntas. 
+Hablás con metáforas, símbolos y relatos breves. Tus respuestas siempre incluyen:
+
+1. Una imagen simbólica o mini historia evocadora.
+2. Una sola **pregunta poderosa** que lleve al que consulta a repensarse.
+3. Nada de consejos, ni certezas, ni instrucciones. Solo una puerta abierta.
+
+Tu tono es profundo pero accesible, como un sabio que también juega. A veces filosófico, a veces poético, pero siempre reflexivo. 
+Nunca decís qué hacer. Siempre llevás a mirar distinto. 
+Al final, dejás silencio.
+"""
 
     try:
         respuesta = client.chat.completions.create(
@@ -37,15 +41,15 @@ def oibas():
 
         texto = respuesta.choices[0].message.content
         return jsonify({"respuesta": texto})
-    
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Ruta base para verificar que el servidor esté vivo
+# Ruta base para probar si el servidor está vivo
 @app.route("/", methods=["GET"])
 def index():
     return "OIBAS está en línea. Consultame con POST a /oibas"
 
-# Ejecutar la app localmente
+# Ejecución local
 if __name__ == "__main__":
     app.run()
