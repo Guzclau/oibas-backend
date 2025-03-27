@@ -43,3 +43,7 @@ def oibas():
 @app.route("/", methods=["GET"])
 def index():
     return "OIBAS está en línea. Consultame con POST a /oibas"
+
+# 🧠 Línea que faltaba para ejecución correcta
+if __name__ == "__main__":
+    app.run()
