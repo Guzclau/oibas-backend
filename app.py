@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from openai import OpenAI
 from flask_cors import CORS
 import os
+import random
 
 app = Flask(__name__)
 CORS(app)  # Permite peticiones desde Wix u otros orígenes
@@ -11,8 +12,25 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 @app.route("/oibas", methods=["POST"])
 def oibas():
     data = request.get_json()
-    pregunta = data.get("pregunta", "")
+    pregunta = data.get("pregunta", "").strip()
 
+    # Función para detectar si la pregunta tiene sentido
+    def es_pregunta_valida(texto):
+        return len(texto) >= 5 and any(c.isalpha() for c in texto)
+
+    # Si no es válida, respondemos con algo simbólico sin llamar a OpenAI
+    if not es_pregunta_valida(pregunta):
+        respuestas_invalidas = [
+            "El río no entiende tu idioma… intentá con palabras más claras.",
+            "Has lanzado un eco vacío. Probá de nuevo con algo que tenga forma.",
+            "Eso suena a un conjuro olvidado... ¿Querés escribir algo más entendible?",
+            "Hasta el silencio tiene sentido. Pero esto… esto es un acertijo sin clave.",
+            "Ni los sabios del bosque entendieron ese mensaje. ¿Probás otra vez?",
+            "Parece que tu alma todavía está buscando las palabras… tomate tu tiempo."
+        ]
+        return jsonify({"respuesta": random.choice(respuestas_invalidas)})
+
+    # Mensaje del sistema para OIBAS
     mensaje_sistema = """
 Sos OIBAS, un oráculo simbólico, poético y provocador. No respondés con certezas, ni consejos, ni instrucciones. 
 No estás aquí para resolver dudas, sino para encender nuevas preguntas. Tu voz es una mezcla de sabiduría ancestral y juego existencial.
