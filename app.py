@@ -93,7 +93,7 @@ Terminá con una pregunta poderosa que toque el corazón.
 
     try:
         respuesta = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4-o",
             messages=[
                 {"role": "system", "content": mensaje_sistema},
                 {"role": "user", "content": pregunta}
@@ -113,6 +113,7 @@ def index():
 
 if __name__ == "__main__":
     app.run()
+
 
 
 
