@@ -99,7 +99,7 @@ Terminá con una pregunta poderosa que toque el corazón.
                 {"role": "user", "content": pregunta}
             ],
             temperature=0.95,
-            max_tokens=500
+            max_tokens=150
         )
         texto = respuesta.choices[0].message.content
         return jsonify({"respuesta": texto})
@@ -113,4 +113,5 @@ def index():
 
 if __name__ == "__main__":
     app.run()
+
 
